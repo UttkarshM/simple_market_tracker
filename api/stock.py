@@ -1,9 +1,14 @@
 from http.server import BaseHTTPRequestHandler
 import json
-import yfinance as yf
 from datetime import datetime, timedelta
 import urllib.parse
 import random
+
+try:
+    import yfinance as yf
+    HAS_YFINANCE = True
+except ImportError:
+    HAS_YFINANCE = False
 
 class handler(BaseHTTPRequestHandler):
     def do_GET(self):
@@ -17,18 +22,20 @@ class handler(BaseHTTPRequestHandler):
         
         # Parse URL to get symbol
         url_parts = urllib.parse.urlparse(self.path)
-        path_parts = url_parts.path.split('/')
+        query_params = urllib.parse.parse_qs(url_parts.query)
         
-        # Handle both /api/stock/SYMBOL and /api/stock/SYMBOL/summary
-        if len(path_parts) >= 3:
-            symbol = path_parts[2]
+        # For Vercel routing, the symbol comes in the 'path' query parameter
+        if 'path' in query_params:
+            path_value = query_params['path'][0]
+            path_parts = path_value.split('/')
+            symbol = path_parts[0]
         else:
             response = json.dumps({'error': 'Symbol not provided', 'status': 'error'})
             self.wfile.write(response.encode())
             return
             
         # Check if it's a summary request
-        is_summary = len(path_parts) >= 4 and path_parts[3] == 'summary'
+        is_summary = len(path_parts) >= 2 and path_parts[1] == 'summary'
         
         try:
             if is_summary:

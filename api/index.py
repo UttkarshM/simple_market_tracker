@@ -155,7 +155,9 @@ def get_stock_summary(symbol):
             'sector': 'Technology'
         })
 
-# This is required for Vercel
-def handler(request):
-    return app(request.environ, lambda status, headers: None)
+# This is required for Vercel - export the app
+app_handler = app
+
+if __name__ == '__main__':
+    app.run(debug=True)
 
