@@ -2,6 +2,13 @@
   "version": 2,
   "builds": [
     {
+      "src": "frontend/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    },
+    {
       "src": "api/*.py",
       "use": "@vercel/python"
     }
@@ -18,6 +25,15 @@
     {
       "src": "/api/stock/(.*)",
       "dest": "/api/stock.py?path=$1"
+    },
+    {
+      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg))",
+      "headers": { "cache-control": "s-maxage=31536000,immutable" },
+      "dest": "/frontend/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/index.html"
     }
   ]
 }
