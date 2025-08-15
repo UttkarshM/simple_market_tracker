@@ -2,13 +2,6 @@
   "version": 2,
   "builds": [
     {
-      "src": "frontend/package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "build"
-      }
-    },
-    {
       "src": "api/*.py",
       "use": "@vercel/python"
     }
@@ -16,25 +9,15 @@
   "routes": [
     {
       "src": "/api/companies",
-      "dest": "/api/companies"
+      "dest": "/api/companies.py"
     },
     {
       "src": "/api/stock/(.*)/summary",
-      "dest": "/api/stock?path=$1/summary"
+      "dest": "/api/stock.py?path=$1/summary"
     },
     {
       "src": "/api/stock/(.*)",
-      "dest": "/api/stock?path=$1"
-    },
-    {
-      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|ico|svg))",
-      "headers": { "cache-control": "s-maxage=31536000,immutable" },
-      "dest": "/frontend/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/frontend/index.html"
+      "dest": "/api/stock.py?path=$1"
     }
   ]
 }
-
